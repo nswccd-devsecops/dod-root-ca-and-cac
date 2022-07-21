@@ -1,0 +1,2 @@
+- name: Add CAC support
+  include_tasks: tasks/cac.yml

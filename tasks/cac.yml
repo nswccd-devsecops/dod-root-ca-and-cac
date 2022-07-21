@@ -1,0 +1,86 @@
+# Enable the use of CAC certificates for authentication
+# sudo yum install pcsc-tools pcsc-lite coolkey
+
+- name: Include cert variables
+  include_vars:
+    file: defaults/cac.yml
+    name: cac
+
+- name: Create tmp certs folder
+  file:
+    path: /tmp/certs
+    state: directory
+
+- name: Unpack certs
+  unarchive:
+    src: "https://dl.dod.cyber.mil/wp-content/uploads/pki-pke/zip/certificates_pkcs7_DoD.zip"
+    dest: /tmp/certs
+    remote_src: yes
+
+- name: Convert certificate format
+  command: openssl pkcs7 -print_certs -in Certificates_PKCS7_v5.9_DoD.pem.p7b -out /tmp/certs/DoD_Certs.pem
+  args:
+    chdir: /tmp/certs/Certificates_PKCS7_v5.9_DoD
+    creates: /tmp/certs/DoD_Certs.pem
+
+- name: Copy certs
+  become: true
+  become_user: root
+  copy:
+   src: /tmp/certs/DoD_Certs.pem
+   dest: /etc/pki/ca-trust/source/anchors/
+   owner: root
+   group: root
+   mode: 0755
+
+- name: update-ca-trust
+  become: true
+  become_user: root
+  command: update-ca-trust
+
+- name: Install the latest version of SmartCard software
+  become: true
+  become_user: root
+  package:
+    name:
+      - pcsc-tools
+      - opensc
+    state: latest
+  when: ansible_distribution_major_version == '8'
+
+- name: Install the SmartCard software - EL7
+  become: true
+  become_user: root
+  package:
+    name:
+      - pcsc-tools
+      - pcsc-lite
+      - coolkey
+    state: latest
+  when: ansible_distribution_major_version == '7'
+
+# sudo systemctl enable pcscd
+- name: Start and enable pcscd
+  service:
+    name: pcscd
+    state: started
+    enabled: yes
+
+- name: Install certificates to users {{ install_user if change_user else lookup('env', 'USER') }}/.pki/nssdb
+  command: |
+    certutil -A -d 'sql:/home/{{ install_user if change_user else lookup('env', 'USER') }}/.pki/nssdb'
+    -n '{{ item.name }}'
+    -t '{{ item.trust }}'
+    -i '{{ item.path }}'
+  with_items: '{{ cac.nssdb_certificates }}'
+  when : ansible_distribution_major_version == '7'
+  changed_when: false
+
+# Chrome support
+- name: Enable CAC support in chrome
+  shell: |
+    modutil -dbdir sql:/home/{{ install_user if change_user else lookup('env', 'USER') }}/.pki/nssdb/ -add "CAC Module" -libfile /usr/lib64/libcoolkeypk11.so
+  args:
+    executable: /bin/bash
+  failed_when: "'Failed to add module' in result.stdout"
+  when: ansible_distribution_major_version == '7'
