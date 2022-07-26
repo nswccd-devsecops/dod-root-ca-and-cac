@@ -76,11 +76,12 @@
   when : ansible_distribution_major_version == '7'
   changed_when: false
 
+## Possibly not necessary anymore?? Always throws errors, but David Cambas could open CAC-enabled sites anyway.
 # Chrome support
-- name: Enable CAC support in chrome
-  shell: |
-    modutil -dbdir sql:/home/{{ install_user if change_user else lookup('env', 'USER') }}/.pki/nssdb/ -add "CAC Module" -libfile /usr/lib64/libcoolkeypk11.so
-  args:
-    executable: /bin/bash
-  failed_when: "'Failed to add module' in result.stdout"
-  when: ansible_distribution_major_version == '7'
+# - name: Enable CAC support in chrome
+#   shell: |
+#     modutil -dbdir sql:/home/{{ install_user if change_user else lookup('env', 'USER') }}/.pki/nssdb/ -add "CAC Module" -libfile /usr/lib64/libcoolkeypk11.so
+#   args:
+#     executable: /bin/bash
+#   # failed_when: "'Failed to add module' in result.stdout"
+#   when: ansible_distribution_major_version == '7'
