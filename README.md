@@ -16,13 +16,17 @@ Restart your web browser, or reboot.
 
 ## For Windows
 
-Download InstallRoot Windows Installer from DOD Cyber Exchange and run as admin.
+Download the InstallRoot Windows Installer from DOD Cyber Exchange, using the search bar to filter for "InstallRoot"...
 
 <https://public.cyber.mil/pki-pke/tools-configuration-files/>
 
-Direct download link:
+Direct download link for the admin installer:
 
 <https://dl.dod.cyber.mil/wp-content/uploads/pki-pke/msi/InstallRoot_5.5x64.msi>
+
+Direct download link to the non-admin installer:
+
+<https://dl.dod.cyber.mil/wp-content/uploads/pki-pke/msi/InstallRoot_5.5x32_NonAdmin.msi>
 
 Restart your web browser, or reboot.
 
