@@ -1,9 +1,19 @@
 # DOD Root CA and CAC software) installer
 
-## For Linux systems (preferably RHEL-based).
+## For Linux systems.
 
-Clone this repo, then in a terminal, run
+The provided script uses Red Hat Ansible, so first you need to install that...
+If you have the EPEL repos enabled, just do:
+``` bash
+sudo yum install -y ansible
+```
+Otherwise, install with PIP:
+``` bash
+python3 -m pip install --user --upgrade pip
+pip3 install --user ansible
+```
 
+Then clone this repo and run the script like this:
 ``` bash
 ansible-playbook --ask-become-pass ./dod-root-ca-and-cac-installer.yml
 ```
