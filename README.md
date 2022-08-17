@@ -1,8 +1,13 @@
 # DOD Root CA and CAC software) installer
 
+Ideally, you should install the root CA certificates system-wide on your machine; we have separate instructions below for Windows and Linux.
+If you don't have administrator privileges on your machine, though, you can at least import the certificates into your web browser, as described in the third section.
+
+
+
 ## For Linux systems.
 
-The provided script uses Red Hat Ansible, so first you need to install that...
+The provided scripts use Red Hat Ansible, so first you need to install that...
 If you have the EPEL repos enabled, just do:
 ``` bash
 sudo yum install -y ansible
@@ -26,25 +31,26 @@ Restart your web browser, or reboot.
 
 ## For Windows
 
-Download the InstallRoot Windows Installer from DOD Cyber Exchange, using the search bar to filter for "InstallRoot"...
+Download the InstallRoot installer for Windows from DOD Cyber Exchange, using the search bar to filter for "InstallRoot"...
 
 <https://public.cyber.mil/pki-pke/tools-configuration-files/>
 
-Direct download link for the admin installer:
+There is both
 
-<https://dl.dod.cyber.mil/wp-content/uploads/pki-pke/msi/InstallRoot_5.5x64.msi>
+- [InstallRoot 5.5 NIPR 64-bit Windows Installer](https://dl.dod.cyber.mil/wp-content/uploads/pki-pke/msi/InstallRoot_5.5x64.msi)
+  (if you are **admin** on your machine)
+- and [InstallRoot 5.5 NIPR **Non-Administrator** 32-bit Windows Installer](https://dl.dod.cyber.mil/wp-content/uploads/pki-pke/msi/InstallRoot_5.5x32_NonAdmin.msi)
 
-Direct download link to the non-admin installer:
+Run the installer, and restart your web browser, or reboot.
 
-<https://dl.dod.cyber.mil/wp-content/uploads/pki-pke/msi/InstallRoot_5.5x32_NonAdmin.msi>
-
-Restart your web browser, or reboot.
+If you don't have the necessary permissions to run even the non-admin installer, ideally you should submit a ticket to your help desk, asking them to run the latest RootInstall (or otherwise add DOD Root CA 3) for you...
+But you could import into your browser in the meanwhile, in the next section.
 
 
 
 ## Browser-specific settings
 
-If you don't have permissions to install the root CA system-wide, you can at least import certificates for your web browser.
+If you don't have permissions to properly install the root CA at all, you can at least import certificates into your web browser.
 Go to the Cyber Exchange PKI-PKE home page and click on "New DOD PKI CA Certificates Bundle".
 
 <https://public.cyber.mil/pki-pke/>
