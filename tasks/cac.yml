@@ -66,9 +66,9 @@
     state: started
     enabled: yes
 
-- name: Install certificates to users {{ install_user if change_user else lookup('env', 'USER') }}/.pki/nssdb
+- name: Install certificates to ~/.pki/nssdb/
   command: |
-    certutil -A -d 'sql:/home/{{ install_user if change_user else lookup('env', 'USER') }}/.pki/nssdb'
+    certutil -A -d 'sql:/home/{{ install_user if change_user else lookup('env', 'USER') }}/.pki/nssdb/'
     -n '{{ item.name }}'
     -t '{{ item.trust }}'
     -i '{{ item.path }}'
@@ -76,12 +76,13 @@
   when : ansible_distribution_major_version == '7'
   changed_when: false
 
-## Possibly not necessary anymore?? Always throws errors, but David Cambas could open CAC-enabled sites anyway.
-# Chrome support
-# - name: Enable CAC support in chrome
-#   shell: |
-#     modutil -dbdir sql:/home/{{ install_user if change_user else lookup('env', 'USER') }}/.pki/nssdb/ -add "CAC Module" -libfile /usr/lib64/libcoolkeypk11.so
-#   args:
-#     executable: /bin/bash
-#   # failed_when: "'Failed to add module' in result.stdout"
-#   when: ansible_distribution_major_version == '7'
+- name: Reminder to enable CAC support in Firefox (EL7)
+  debug:
+    msg: |
+      On EL7, Firefox requires manually importing the CoolKey library to access CAC-enabled websites.
+
+      Open Fire ☰ menu > Settings > Privacy & Security > scroll down to the Certificates section and click Security Devices. Click "Load" and:
+
+        * enter "CoolKey CAC Module" (without quotes) as the module name.
+        * enter "/usr/lib64/pkcs11/libcoolkeypk11.so" (without quotes) as the module filename.
+  when: ansible_distribution_major_version | int < 8
