@@ -1,20 +1,18 @@
-# DOD Root CA and CAC software) installer
+# DOD Root CA and CAC software installer
 
 Ideally, you should install the root CA certificates system-wide on your machine; we have separate instructions below for Windows and Linux.
 If you don't have administrator privileges on your machine, though, you can at least import the certificates into your web browser, as described in the third section.
 
 
 
-## For Linux systems.
+## For Linux systems
 
 The provided scripts use Red Hat Ansible, so first you need to install that...
-If you have the EPEL repos enabled, just do:
+Get the latest build for your version of Python, with PIP.
+
 ``` bash
-sudo yum install -y ansible
-```
-Otherwise, install with PIP:
-``` bash
-python3 -m pip install --user --upgrade pip
+sudo yum install -y python3 python3-pip
+python3 -m pip install --user --upgrade pip setuptools virtualenv wheel
 pip3 install --user ansible
 ```
 
@@ -23,9 +21,8 @@ Then clone this repo and run the script like this:
 ansible-playbook --ask-become-pass ./dod-root-ca-and-cac-installer.yml
 ```
 
-Enter your sudo password when prompted.
-
-Restart your web browser, or reboot.
+Don't run this command with `sudo`, but enter your sudo password when prompted to "become".
+**Reboot.**
 
 
 
@@ -41,7 +38,7 @@ There is both
   (if you are **admin** on your machine)
 - and [InstallRoot 5.5 NIPR **Non-Administrator** 32-bit Windows Installer](https://dl.dod.cyber.mil/wp-content/uploads/pki-pke/msi/InstallRoot_5.5x32_NonAdmin.msi)
 
-Run the installer, and restart your web browser, or reboot.
+Run the installer, and **reboot**.
 
 If you don't have the necessary permissions to run even the non-admin installer, ideally you should submit a ticket to your help desk, asking them to run the latest RootInstall (or otherwise add DOD Root CA 3) for you...
 But you could import into your browser in the meanwhile, in the next section.
