@@ -13,14 +13,16 @@
 
 - name: Unpack certs
   unarchive:
-    src: "https://dl.dod.cyber.mil/wp-content/uploads/pki-pke/zip/certificates_pkcs7_DoD.zip"
+    # See latest "PKI CA Certificate bundle" for DOD PKI, here:
+    # https://public.cyber.mil/pki-pke/tools-configuration-files/
+    src: "https://dl.dod.cyber.mil/wp-content/uploads/pki-pke/zip/unclass-certificates_pkcs7_DoD.zip"
     dest: /tmp/certs
     remote_src: yes
 
 - name: Convert certificate format
-  command: openssl pkcs7 -print_certs -in Certificates_PKCS7_v5.9_DoD.pem.p7b -out /tmp/certs/DoD_Certs.pem
+  command: openssl pkcs7 -print_certs -in certificates_pkcs7_v5_11_dod_pem.p7b -out /tmp/certs/DoD_Certs.pem
   args:
-    chdir: /tmp/certs/Certificates_PKCS7_v5.9_DoD
+    chdir: /tmp/certs/certificates_pkcs7_v5_11_dod
     creates: /tmp/certs/DoD_Certs.pem
 
 - name: Copy certs

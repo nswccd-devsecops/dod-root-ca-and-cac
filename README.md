@@ -9,15 +9,24 @@ If you don't have administrator privileges on your machine, though, you can at l
 
 The provided scripts use Red Hat Ansible, so first you need to install that...
 Get the latest build for your version of Python, with PIP.
+(Installing/upgrading PIP itself and some related tools _first_ will make installing Ansible go more smoothly.)
 
 ``` bash
 sudo yum install -y python3 python3-pip
 python3 -m pip install --user --upgrade pip setuptools virtualenv wheel
-pip3 install --user ansible
+python3 -m pip install --user --upgrade ansible
 ```
 
-Then clone this repo and run the script like this:
+If you have leftover copies of the certificates bundle from a previous installation, delete them before proceeding.
+
 ``` bash
+sudo rm -rf /tmp/certs/
+```
+
+Then you can clone this repo and run the script like this:
+``` bash
+git clone "https://github.com/nswccd-devsecops/dod-root-ca-and-cac"
+cd ./dod-root-ca-and-cac/
 ansible-playbook --ask-become-pass ./dod-root-ca-and-cac-installer.yml
 ```
 
@@ -48,13 +57,13 @@ But you could import into your browser in the meanwhile, in the next section.
 ## Browser-specific settings
 
 If you don't have permissions to properly install the root CA at all, you can at least import certificates into your web browser.
-Go to the Cyber Exchange PKI-PKE home page and click on "New DOD PKI CA Certificates Bundle".
+Go to the Cyber Exchange PKI-PKE home page and click on "New DoD PKI CAs released".
 
 <https://public.cyber.mil/pki-pke/>
 
 Direct download link:
 
-<https://dl.dod.cyber.mil/wp-content/uploads/pki-pke/zip/certificates_pkcs7_DoD.zip>
+<https://dl.dod.cyber.mil/wp-content/uploads/pki-pke/zip/unclass-certificates_pkcs7_DoD.zip>
 
 Unpack the Zip file, and import the contained certificates in each web browser you use.
 
