@@ -1,20 +1,21 @@
 # The certificates with the trustlevels defined
 nssdb_certificates:
-  - name:  DOD CA - DOD
-    path: /tmp/certs/Certificates_PKCS7_v5.9_DoD/Certificates_PKCS7_v5.9_DoD.der.p7b
+  - name:  DOD CA
+    path: /tmp/certs/certificates_pkcs7_v5_12_dod/certificates_pkcs7_v5_12_dod_der.p7b
     trust: TC
-  - name: DOD CA 3 - DOD
-    path: /tmp/certs/Certificates_PKCS7_v5.9_DoD/Certificates_PKCS7_v5.9_DoD_DoD_Root_CA_3.der.p7b
+  - name: DOD CA 3
+    path: /tmp/certs/certificates_pkcs7_v5_12_dod/certificates_pkcs7_v5_12_dod_dod_root_ca_3_der.p7b
     trust: TC
-  - name: DOD CA 4 - DOD
-    path: /tmp/certs/Certificates_PKCS7_v5.9_DoD/Certificates_PKCS7_v5.9_DoD_DoD_Root_CA_4.der.p7b
+  - name: DOD CA 4
+    path: /tmp/certs/certificates_pkcs7_v5_12_dod/certificates_pkcs7_v5_12_dod_dod_root_ca_4_der.p7b
     trust: TC
-  - name: DOD CA 5 - DOD
-    path: /tmp/certs/Certificates_PKCS7_v5.9_DoD/Certificates_PKCS7_v5.9_DoD_DoD_Root_CA_5.der.p7b
+  - name: DOD CA 5
+    path: /tmp/certs/certificates_pkcs7_v5_12_dod/certificates_pkcs7_v5_12_dod_dod_root_ca_5_der.p7b
     trust: TC
-  # - name: DOD CA pem - DOD
-  #   path: /tmp/certs/Certificates_PKCS7_v5.9_DoD/Certificates_PKCS7_v5.9_DoD.pem.p7b
-  #   trust: TC
+  - name: DOD CA 6
+    path: /tmp/certs/certificates_pkcs7_v5_12_dod/certificates_pkcs7_v5_12_dod_dod_root_ca_6_der.p7b
+    trust: TC
+
   # EL7 certutil doesn't support .pem.p7b format, so use the one we converted in the cac.yml task instead.
   - name: DOD CA pem - DOD
     path: /tmp/certs/DoD_Certs.pem

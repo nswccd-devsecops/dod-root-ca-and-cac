@@ -1,2 +1,6 @@
 - name: Add CAC support
   include_tasks: tasks/cac.yml
+
+- name: Recommend user reboots the system
+  debug:
+    msg: Done! Please reboot before getting to work.

@@ -1,5 +1,11 @@
-# Enable the use of CAC certificates for authentication
-# sudo yum install pcsc-tools pcsc-lite coolkey
+- name: Warn to exit all web browsers before continuing
+  pause:
+    prompt: |
+
+      *** We'll be installing CAC software and root CA certificates, which may cause issues with running web browsers.
+      Please exit all web browsers before you continue.
+
+      Press Enter to continue, or Ctrl-C to cancel and rerun user_config later.
 
 - name: Include cert variables
   include_vars:
@@ -20,9 +26,9 @@
     remote_src: yes
 
 - name: Convert certificate format
-  command: openssl pkcs7 -print_certs -in certificates_pkcs7_v5_11_dod_pem.p7b -out /tmp/certs/DoD_Certs.pem
+  command: openssl pkcs7 -print_certs -in certificates_pkcs7_v5_12_dod_pem.p7b -out /tmp/certs/DoD_Certs.pem
   args:
-    chdir: /tmp/certs/certificates_pkcs7_v5_11_dod
+    chdir: /tmp/certs/certificates_pkcs7_v5_12_dod
     creates: /tmp/certs/DoD_Certs.pem
 
 - name: Copy certs
@@ -40,7 +46,7 @@
   become_user: root
   command: update-ca-trust
 
-- name: Install the latest version of SmartCard software
+- name: Install the SmartCard software (EL8+)
   become: true
   become_user: root
   package:
@@ -48,9 +54,9 @@
       - pcsc-tools
       - opensc
     state: latest
-  when: ansible_distribution_major_version == '8'
+  when: ansible_distribution_major_version | int >= 8
 
-- name: Install the SmartCard software - EL7
+- name: Install the SmartCard software (EL7)
   become: true
   become_user: root
   package:
@@ -59,7 +65,7 @@
       - pcsc-lite
       - coolkey
     state: latest
-  when: ansible_distribution_major_version == '7'
+  when: ansible_distribution_major_version | int < 8
 
 # sudo systemctl enable pcscd
 - name: Start and enable pcscd
@@ -68,23 +74,51 @@
     state: started
     enabled: yes
 
-- name: Install certificates to ~/.pki/nssdb/
+- name: Create ~/.pki/nssdb/ directory (EL7)
+  file:
+    path: /home/{{ install_user if change_user else lookup('env', 'USER') }}/.pki/nssdb
+    state: directory
+    owner: "{{ install_user if change_user else lookup('env', 'USER') }}"
+    mode: "u=rwX,g=,o="
+    recurse: true
+  when: ansible_distribution_major_version | int < 8
+
+- name: Install certificates to ~/.pki/nssdb/ (EL7)
   command: |
     certutil -A -d 'sql:/home/{{ install_user if change_user else lookup('env', 'USER') }}/.pki/nssdb/'
     -n '{{ item.name }}'
     -t '{{ item.trust }}'
     -i '{{ item.path }}'
   with_items: '{{ cac.nssdb_certificates }}'
-  when : ansible_distribution_major_version == '7'
+  when : ansible_distribution_major_version | int < 8
   changed_when: false
 
+- name: chown and chmod installed ~/.pki/nssdb/ databases (EL7)
+  become: true
+  become_user: root
+  file:
+    path: /home/{{ install_user if change_user else lookup('env', 'USER') }}/.pki/
+    recurse: true
+    owner: "{{ install_user if change_user else lookup('env', 'USER') }}"
+    group: "{{ install_user if change_user else lookup('env', 'USER') }}"
+    mode: "u=rwX,g=,o="
+  when: ansible_distribution_major_version | int < 8
+
+- name: Enable CAC support in Google Chrome (EL7)
+  shell: |
+    modutil -dbdir sql:/home/{{ install_user if change_user else lookup('env', 'USER') }}/.pki/nssdb/ -add "CoolKey CAC Module" -libfile /usr/lib64/pkcs11/libcoolkeypk11.so -force
+  when: ansible_distribution_major_version | int < 8
+
+# I can't figure out any way to script this... But hopefully the number of EL7 users is shrinking.
 - name: Reminder to enable CAC support in Firefox (EL7)
   debug:
     msg: |
-      On EL7, Firefox requires manually importing the CoolKey library to access CAC-enabled websites.
 
-      Open Fire ☰ menu > Settings > Privacy & Security > scroll down to the Certificates section and click Security Devices. Click "Load" and:
+      On EL7, Firefox needs you to manually import the CoolKey module to access CAC-enabled websites.
 
-        * enter "CoolKey CAC Module" (without quotes) as the module name.
-        * enter "/usr/lib64/pkcs11/libcoolkeypk11.so" (without quotes) as the module filename.
+      Open the Firefox ☰ Menu > Settings > Privacy & Security.
+      Scroll down the "Certificates" heading and click "Security Devices".
+      Click "Load".
+      Enter "CoolKey CAC Module" as the module name, and "/usr/lib64/pkcs11/libcoolkeypk11.so" as the module filename.
+      Click "OK".
   when: ansible_distribution_major_version | int < 8
