@@ -25,17 +25,11 @@
     dest: /tmp/certs
     remote_src: yes
 
-- name: Convert certificate format
-  command: openssl pkcs7 -print_certs -in certificates_pkcs7_v5_12_dod_pem.p7b -out /tmp/certs/DoD_Certs.pem
-  args:
-    chdir: /tmp/certs/certificates_pkcs7_v5_12_dod
-    creates: /tmp/certs/DoD_Certs.pem
-
 - name: Copy certs
   become: true
   become_user: root
   copy:
-   src: /tmp/certs/DoD_Certs.pem
+   src: /tmp/certs/certificates_pkcs7_v5_13_dod/dod_pke_chain.pem
    dest: /etc/pki/ca-trust/source/anchors/
    owner: root
    group: root
@@ -46,6 +40,7 @@
   become_user: root
   command: update-ca-trust
 
+# Need to have EPEL repos enabled first...
 - name: Install the SmartCard software (EL8+)
   become: true
   become_user: root
