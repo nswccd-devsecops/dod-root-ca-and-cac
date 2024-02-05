@@ -1,5 +1,5 @@
 - name: Warn to exit all web browsers before continuing
-  pause:
+  ansible.builtin.pause:
     prompt: |
 
       *** We'll be installing CAC software and root CA certificates, which may cause issues with running web browsers.
@@ -8,29 +8,33 @@
       Press Enter to continue, or Ctrl-C to cancel and rerun user_config later.
 
 - name: Include cert variables
-  include_vars:
+  ansible.builtin.include_vars:
     file: defaults/cac.yml
     name: cac
 
 - name: Create tmp certs folder
-  file:
+  become: true
+  become_user: root
+  ansible.builtin.file:
     path: /tmp/certs
     state: directory
 
 - name: Unpack certs
-  unarchive:
+  become: true
+  become_user: root
+  ansible.builtin.unarchive:
     # See latest "PKI CA Certificate bundle" for DOD PKI, here:
     # https://public.cyber.mil/pki-pke/tools-configuration-files/
     src: "https://dl.dod.cyber.mil/wp-content/uploads/pki-pke/zip/unclass-certificates_pkcs7_DoD.zip"
     dest: /tmp/certs
     remote_src: yes
 
-- name: Copy certs
+- name: Copy cert chain.
   become: true
   become_user: root
-  copy:
+  ansible.builtin.copy:
    src: /tmp/certs/certificates_pkcs7_v5_13_dod/dod_pke_chain.pem
-   dest: /etc/pki/ca-trust/source/anchors/
+   dest: /etc/pki/ca-trust/source/anchors/DoD_Certs.pem
    owner: root
    group: root
    mode: 0755
@@ -38,23 +42,33 @@
 - name: update-ca-trust
   become: true
   become_user: root
-  command: update-ca-trust
+  ansible.builtin.command: update-ca-trust
 
 # Need to have EPEL repos enabled first...
 - name: Install the SmartCard software (EL8+)
   become: true
   become_user: root
-  package:
+  ansible.builtin.package:
     name:
       - pcsc-tools
       - opensc
     state: latest
   when: ansible_distribution_major_version | int >= 8
 
+# sudo systemctl enable pcscd
+- name: Start and enable pcscd (EL8+)
+  become: true
+  become_user: root
+  ansible.builtin.service:
+    name: pcscd
+    state: started
+    enabled: yes
+  when: ansible_distribution_major_version | int >= 8
+
 - name: Install the SmartCard software (EL7)
   become: true
   become_user: root
-  package:
+  ansible.builtin.package:
     name:
       - pcsc-tools
       - pcsc-lite
@@ -62,14 +76,8 @@
     state: latest
   when: ansible_distribution_major_version | int < 8
 
-# sudo systemctl enable pcscd
-- name: Start and enable pcscd
-  service:
-    name: pcscd
-    state: started
-    enabled: yes
-
 - name: Create ~/.pki/nssdb/ directory (EL7)
+  become: false
   file:
     path: /home/{{ install_user if change_user else lookup('env', 'USER') }}/.pki/nssdb
     state: directory
@@ -79,6 +87,7 @@
   when: ansible_distribution_major_version | int < 8
 
 - name: Install certificates to ~/.pki/nssdb/ (EL7)
+  become: false
   command: |
     certutil -A -d 'sql:/home/{{ install_user if change_user else lookup('env', 'USER') }}/.pki/nssdb/'
     -n '{{ item.name }}'
@@ -89,8 +98,7 @@
   changed_when: false
 
 - name: chown and chmod installed ~/.pki/nssdb/ databases (EL7)
-  become: true
-  become_user: root
+  become: false
   file:
     path: /home/{{ install_user if change_user else lookup('env', 'USER') }}/.pki/
     recurse: true
@@ -100,6 +108,7 @@
   when: ansible_distribution_major_version | int < 8
 
 - name: Enable CAC support in Google Chrome (EL7)
+  become: false
   shell: |
     modutil -dbdir sql:/home/{{ install_user if change_user else lookup('env', 'USER') }}/.pki/nssdb/ -add "CoolKey CAC Module" -libfile /usr/lib64/pkcs11/libcoolkeypk11.so -force
   when: ansible_distribution_major_version | int < 8
