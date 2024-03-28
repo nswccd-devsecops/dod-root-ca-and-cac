@@ -37,24 +37,24 @@ Don't run this command with `sudo`, but enter your sudo password when prompted t
 
 ## For Windows
 
-Download the InstallRoot installer for Windows from DOD Cyber Exchange, using the search bar to filter for "InstallRoot"...
+Download the InstallRoot installer for Windows from DOD Cyber Exchange, using the search bar in the Tools section of the page to filter for "InstallRoot Windows".
 
 <https://public.cyber.mil/pki-pke/tools-configuration-files/>
 
-There is both
+There you should see both
 
-- [InstallRoot 5.5 NIPR 64-bit Windows Installer](https://dl.dod.cyber.mil/wp-content/uploads/pki-pke/msi/InstallRoot_5.5x64.msi)
+- [InstallRoot 5.6 NIPR 64-bit Windows Installer ](https://dl.dod.cyber.mil/wp-content/uploads/pki-pke/msi/InstallRoot_5.6x64.msi)
   (if you are **admin** on your machine)
-- and [InstallRoot 5.5 NIPR **Non-Administrator** 32-bit Windows Installer](https://dl.dod.cyber.mil/wp-content/uploads/pki-pke/msi/InstallRoot_5.5x32_NonAdmin.msi)
+- and [InstallRoot 5.6 NIPR **Non-Administrator** 64-bit Windows Installer](https://dl.dod.cyber.mil/wp-content/uploads/pki-pke/msi/InstallRoot_5.6x64_NonAdmin.msi)
 
-Run the installer, and **reboot**.
+Run the installer, follow the instructions for "Install DoD Certificates" at first launch, and then **reboot**.
 
-If you don't have the necessary permissions to run even the non-admin installer, ideally you should submit a ticket to your help desk, asking them to run the latest RootInstall (or otherwise add DOD Root CA 3) for you...
+If you don't have the necessary permissions to run even the non-admin installer, ideally you should submit a ticket to your help desk, asking them to run the latest InstallRoot (or otherwise add DOD Root CA 3) for you...
 But you could import into your browser in the meanwhile, in the next section.
 
 
 
-## Browser-specific settings
+## Browser-specific settings on desktop/laptop
 
 If you don't have permissions to properly install the root CA at all, you can at least import certificates into your web browser.
 Go to the Cyber Exchange PKI-PKE home page and click on "New DoD PKI CAs released".
