@@ -72,8 +72,15 @@ Unpack the Zip file, and import the contained certificates in each web browser y
     1. In the left side-bar, click on Privacy & Security.
     1. Scroll down to the Certificates section, and click View Certificates...
     1. On the Authorities tab, click the Import button.
-    1. You probably only need the `.pem` file, but I just attempt to import all certificates (one at a time) just in case.
+    1. You probably only need the certificate chain file `certificates_pkcs7_v5_13_dod_der.p7b`, but Cyber Exchange occasionally changes how the files are formatted, so I just attempt to import all certificates (one at a time) just in case.
        This is redundant and the browser will mention some certificates were already imported with one of the previous files.
+       Click OK to close the dialog when you're done.
+    1. On Linux,if you're manually importing the DOD root CA, you may also need to import the CAC software module:
+        1. Back on Settings > Privacy & Security > Certificates, also click on Security Devices.
+        1. Click Load.
+        1. Enter something descriptive like "OpenSC CAC module" in the Module Name field.
+        1. Copy/paste or navigate to the path `/usr/lib64/opensc-pkcs11.so` for Module Filename.
+        1. Click OK to close all dialogs.
     1. Restart your browser and/or reboot.
 - Google Chrome
     1. In the top-right of the window, click on the ⫶ menu > Settings.
@@ -81,7 +88,7 @@ Unpack the Zip file, and import the contained certificates in each web browser y
     1. In the Privacy and Security section, click on the Security row.
     1. Scroll down and click on Manage Certificates.
     1. On the Authorities tab, click the Import button.
-    1. You probably only need the `.pem` file, but I just attempt to import all certificates (one at a time) just in case.
+    1. You probably only need the certificate chain file `certificates_pkcs7_v5_13_dod_der.p7b`, but Cyber Exchange occasionally changes how the files are formatted, so I just attempt to import all certificates (one at a time) just in case.
        This is redundant and the browser will mention some certificates were already imported with one of the previous files.
     1. Restart your browser and/or reboot.
 - Microsoft Edge
@@ -89,6 +96,6 @@ Unpack the Zip file, and import the contained certificates in each web browser y
     1. In the left side-bar, click on Privacy, Search, and Services.
     1. Scroll down to the Security section, and click on Manage Certificates.
     1. On the Trusted Root Certificate Authorities tab, click on Import...
-    1. You probably only need the `.pem` file, but I just attempt to import all certificates (one at a time) just in case.
+    1. You probably only need the certificate chain file `certificates_pkcs7_v5_13_dod_der.p7b`, but Cyber Exchange occasionally changes how the files are formatted, so I just attempt to import all certificates (one at a time) just in case.
        This is redundant and the browser will mention some certificates were already imported with one of the previous files.
     1. Restart your browser and/or reboot.
