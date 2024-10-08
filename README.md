@@ -96,20 +96,42 @@ Hit <kbd>Ctrl</kbd>+<kbd>C</kbd> to end the scan.
 
 ## For Windows
 
-Download the InstallRoot installer for Windows from DOD Cyber Exchange, using the search bar in the Tools section of the page to filter for "InstallRoot Windows".
+#### Root CA
+
+Download the InstallRoot installer for Windows from DOD Cyber Exchange --- use the search bar in the Tools section of the page to filter for "InstallRoot Windows".
 
 <https://public.cyber.mil/pki-pke/tools-configuration-files/>
 
 There you should see both
 
-- [InstallRoot 5.6 NIPR 64-bit Windows Installer ](https://dl.dod.cyber.mil/wp-content/uploads/pki-pke/msi/InstallRoot_5.6x64.msi)
+- InstallRoot 5.6 NIPR 64-bit Windows Installer
   (if you are **admin** on your machine)
-- and [InstallRoot 5.6 NIPR **Non-Administrator** 64-bit Windows Installer](https://dl.dod.cyber.mil/wp-content/uploads/pki-pke/msi/InstallRoot_5.6x64_NonAdmin.msi)
+- InstallRoot 5.6 NIPR **Non-Administrator** 64-bit Windows Installer
 
-Run the installer, follow the instructions for "Install DoD Certificates" at first launch, and then **reboot**.
+Run whichever installer is appropriate for you, follow the instructions for "Install DoD Certificates" at first launch, and then continue to installing CAC software below before you reboot.
 
-If you don't have the necessary permissions to run even the non-admin installer, ideally you should submit a ticket to your help desk, asking them to run the latest InstallRoot (or otherwise add DOD Root CA 3) for you...
-But you could import into your browser in the meanwhile, in the next section.
+If you don't have the necessary permissions to run even the non-admin installer, ideally you should submit a ticket to your help desk, asking them to run the latest InstallRoot (or otherwise add DOD Root CA 3, 4, 5, and 6) for you...
+But you could import into your browser in the meanwhile, in the section further down.
+
+#### CAC
+
+Your organization might commonly provide licensed copies of ActivID ActivClient, by HID Global --- if so, you maybe ought to use that, provided by your IT department.
+
+Otherwise, you can get [OpenSC](https://github.com/OpenSC/OpenSC/wiki) for free.
+Go to the [latest release page](https://github.com/OpenSC/OpenSC/releases/latest),
+and download and run the .msi installer --- most likely you'd want `OpenSC-*_win64.msi`, and possibly also `OpenSC-*_win32.msi` for working with legacy applications.
+(The "light" installers have less features, and for typical PC/workstation users, you probably don't need that tradeoff so there's no point.)
+
+Afterward, you can confirm it's working by inserting into your smartcard reader, and running these commands in PowerShell.
+
+``` powershell
+# Test the driver support.
+C:\Windows\SysWOW64\certutil.exe -scinfo
+# Test PKCS#11 support.
+"C:\Program Files\OpenSC Project\OpenSC\tools\pkcs11-tool.exe" --login --test
+```
+
+After installing the certificates and CAC software, you may want to **reboot.**
 
 
 
