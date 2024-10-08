@@ -1,7 +1,13 @@
-# DOD Root CA and CAC software installer
+# DOD Root CA and CAC software installation
 
-Ideally, you should install the root CA certificates system-wide on your machine; we have separate instructions below for Windows and Linux.
-If you don't have administrator privileges on your machine, though, you can at least import the certificates into your web browser, as described in the third section.
+How to install the root [Certificate Authority](https://en.wikipedia.org/wiki/Certificate_authority)
+certificates and [Common Access Card / smart card](https://en.wikipedia.org/wiki/Smart_card)
+software needed to access US Department Of Defense websites.
+
+Ideally, you should install the root CA certs system-wide on your machine; we have separate instructions below for Windows and Linux.
+If you don't have administrator privileges on your machine, though, you can at least import the certificates into your web browser, as described in the third main section.
+
+**Certain developer build tools may require additional configuration to use the DOD certificates, but that is outside the scope of this document.**
 
 
 
