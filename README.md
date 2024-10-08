@@ -7,30 +7,89 @@ If you don't have administrator privileges on your machine, though, you can at l
 
 ## For Linux systems
 
-The provided scripts use Red Hat Ansible, so first you need to install that...
-Get the latest build for your version of Python, with PIP.
-(Installing/upgrading PIP itself and some related tools _first_ will make installing Ansible go more smoothly.)
+### Red Hat family of distributions
+
+#### Root CA
+
+To install the DOD root CA certificates, you'll also need to install a few certificate management tools:
 
 ``` bash
-sudo yum install -y python3 python3-pip
-python3 -m pip install --user --upgrade pip setuptools virtualenv wheel
-python3 -m pip install --user --upgrade ansible
+sudo dnf install -y nss-tools openssl
 ```
 
-If you have leftover copies of the certificates bundle from a previous installation, delete them before proceeding.
+See the latest "PKI CA Certificate bundle" for DOD PKI, here:
+<https://public.cyber.mil/pki-pke/tools-configuration-files/>.
+The following commands will install the certificates for you, but if Cyber Exchange bumps the version numbers or otherwise renames the files in the Zip archive, you might need to adjust the commands' file paths slightly.
 
 ``` bash
-sudo rm -rf /tmp/certs/
+cd ~/Downloads/
+wget https://dl.dod.cyber.mil/wp-content/uploads/pki-pke/zip/unclass-certificates_pkcs7_DoD.zip
+unzip ./unclass-certificates_pkcs7_DoD.zip
+cd ./certificates_pkcs7_v5_13_dod/
+sudo openssl pkcs7 -print_certs -inform der -in ./certificates_pkcs7_v5_13_dod_der.p7b -out /etc/pki/ca-trust/source/anchors/DoD_Certs.pem
+sudo update-ca-trust
+
+mkdir -p "$HOME/.pki/nssdb"
+chmod 'u=rwX,g=,o=' --recursive "$HOME/.pki/nssdb/"
+sudo mkdir -p /etc/pki/nssdb
+for cert in ./*.p7b
+do
+    certutil -A -d "sql:${HOME}/.pki/nssdb/" -t TC -n "DOD CA $( basename $cert .p7b )" -i "$cert"
+    sudo certutil -A -d "sql:/etc/pki/nssdb/" -t TC -n "DOD CA $( basename $cert .p7b )" -i "$cert"
+done
 ```
 
-Then you can clone this repo and run the script like this:
+And if you use any Java applications,
 ``` bash
-git clone "https://github.com/nswccd-devsecops/dod-root-ca-and-cac"
-cd ./dod-root-ca-and-cac/
-ansible-playbook --ask-become-pass ./dod-root-ca-and-cac-installer.yml
+keytool -importcert -file /etc/pki/ca-trust/source/anchors/DoD_Certs.pem -cacerts -keypass changeit -storepass changeit -noprompt -alias dod-root-ca
 ```
 
-Don't run this command with `sudo`, but enter your sudo password when prompted to "become".
+Continue to install CAC software below, before rebooting.
+
+#### CAC
+
+Fedora users can stick with the distro-default repos, but \*Enterprise Linux users will need to enable the
+[Fedora EPEL repo](https://docs.fedoraproject.org/en-US/epel/),
+if you don't have it already.
+
+``` bash
+# For EL8...
+sudo dnf install -y "https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm"
+# For EL9...
+sudo dnf install -y "https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm"
+```
+
+And if you're on CentOS Stream, then also enable EPEL Next:
+
+``` bash
+sudo dnf install -y epel-next-release
+```
+
+After that you can install CAC software like any other package:
+
+``` bash
+sudo dnf install -y esc opensc pcsc-lite pcsc-tools
+sudo systemctl enable --now pcscd.service
+```
+
+You can test to see if the computer properly recognizes your inserted CAC by running
+``` bash
+pcsc_scan
+```
+
+It should fairly quickly list a reader, and card attributes, something like
+```
+ Reader 0: Broadcom Corp xxxxx [Contacted SmartCard] (xxxxxxxxxxxxxx) 00 00
+  Card state: Card inserted, Shared Mode,
+  ATR: XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX
+
+ATR: XX XX XX XX XX XX XX XX XX XX XX XX XX XX XX
++ TS = ...
++ T0 = ...
+  TA(1) = ...
+```
+Hit <kbd>Ctrl</kbd>+<kbd>C</kbd> to end the scan.
+
 **Reboot.**
 
 
