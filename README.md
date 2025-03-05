@@ -31,8 +31,8 @@ The following commands will install the certificates for you, but if Cyber Excha
 cd ~/Downloads/
 wget https://dl.dod.cyber.mil/wp-content/uploads/pki-pke/zip/unclass-certificates_pkcs7_DoD.zip
 unzip ./unclass-certificates_pkcs7_DoD.zip
-cd ./certificates_pkcs7_v5_13_dod/
-sudo openssl pkcs7 -print_certs -inform der -in ./certificates_pkcs7_v5_13_dod_der.p7b -out /etc/pki/ca-trust/source/anchors/DoD_Certs.pem
+cd ./Certificates_PKCS7_v5_14_DoD/
+sudo openssl pkcs7 -print_certs -inform der -in ./Certificates_PKCS7_v5_14_DoD.der.p7b -out /etc/pki/ca-trust/source/anchors/DoD_Certs.pem
 sudo update-ca-trust
 
 mkdir -p "$HOME/.pki/nssdb"
@@ -159,7 +159,7 @@ Unpack the Zip file, and import the contained certificates in each web browser y
     1. In the left side-bar, click on Privacy & Security.
     1. Scroll down to the Certificates section, and click View Certificates...
     1. On the Authorities tab, click the Import button.
-    1. You probably only need the certificate chain file `certificates_pkcs7_v5_13_dod_der.p7b`, but Cyber Exchange occasionally changes how the files are formatted, so I just attempt to import all certificates (one at a time) just in case.
+    1. You probably only need the certificate chain file `Certificates_PKCS7_v5_14_DoD.der.p7b`, but Cyber Exchange occasionally changes how the files are formatted, so I just attempt to import all certificates (one at a time) just in case.
        This is redundant and the browser will mention some certificates were already imported with one of the previous files.
        Click OK to close the dialog when you're done.
     1. On Linux,if you're manually importing the DOD root CA, you may also need to import the CAC software module:
@@ -175,7 +175,7 @@ Unpack the Zip file, and import the contained certificates in each web browser y
     1. In the Privacy and Security section, click on the Security row.
     1. Scroll down and click on Manage Certificates.
     1. On the Authorities tab, click the Import button.
-    1. You probably only need the certificate chain file `certificates_pkcs7_v5_13_dod_der.p7b`, but Cyber Exchange occasionally changes how the files are formatted, so I just attempt to import all certificates (one at a time) just in case.
+    1. You probably only need the certificate chain file `Certificates_PKCS7_v5_14_DoD.der.p7b`, but Cyber Exchange occasionally changes how the files are formatted, so I just attempt to import all certificates (one at a time) just in case.
        This is redundant and the browser will mention some certificates were already imported with one of the previous files.
     1. Restart your browser and/or reboot.
 - Microsoft Edge
@@ -183,6 +183,6 @@ Unpack the Zip file, and import the contained certificates in each web browser y
     1. In the left side-bar, click on Privacy, Search, and Services.
     1. Scroll down to the Security section, and click on Manage Certificates.
     1. On the Trusted Root Certificate Authorities tab, click on Import...
-    1. You probably only need the certificate chain file `certificates_pkcs7_v5_13_dod_der.p7b`, but Cyber Exchange occasionally changes how the files are formatted, so I just attempt to import all certificates (one at a time) just in case.
+    1. You probably only need the certificate chain file `Certificates_PKCS7_v5_14_DoD.der.p7b`, but Cyber Exchange occasionally changes how the files are formatted, so I just attempt to import all certificates (one at a time) just in case.
        This is redundant and the browser will mention some certificates were already imported with one of the previous files.
     1. Restart your browser and/or reboot.
