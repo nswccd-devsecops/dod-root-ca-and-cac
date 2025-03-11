@@ -38,10 +38,10 @@ sudo update-ca-trust
 mkdir -p "$HOME/.pki/nssdb"
 chmod 'u=rwX,g=,o=' --recursive "$HOME/.pki/nssdb/"
 sudo mkdir -p /etc/pki/nssdb
-for cert in ./*.p7b
+for cert in ./*.der.p7b
 do
-    certutil -A -d "sql:${HOME}/.pki/nssdb/" -t TC -n "DOD CA $( basename $cert .p7b )" -i "$cert"
-    sudo certutil -A -d "sql:/etc/pki/nssdb/" -t TC -n "DOD CA $( basename $cert .p7b )" -i "$cert"
+    certutil -A -d "sql:${HOME}/.pki/nssdb/" -t TC -n "DOD CA $( basename $cert .der.p7b )" -i "$cert"
+    sudo certutil -A -d "sql:/etc/pki/nssdb/" -t TC -n "DOD CA $( basename $cert .der.p7b )" -i "$cert"
 done
 ```
 
